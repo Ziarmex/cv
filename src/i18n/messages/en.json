@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "about": "About",
+    "skills": "Skills",
+    "projects": "Projects",
+    "experience": "Experience",
+    "education": "Education",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Bouraoui Ziad Rafik",
+    "subtitle": "Computer Science Student | IoT & AI",
+    "available": "Available",
+    "cta": "View my projects"
+  },
+  "about": {
+    "title": "About",
+    "description": "A passionate student in the Internet of Things (IoT), connected systems, and intelligent data analysis. Curious about the interconnection between computing and industry, I enjoy designing solutions that combine sensors, automation, and data processing."
+  },
+  "skills": {
+    "title": "Skills",
+    "categories": {
+      "iot": "IoT & Edge AI",
+      "databases": "Databases & Dashboards",
+      "languages": "Programming Languages",
+      "web": "Web Development",
+      "mobile": "Mobile Development",
+      "tools": "Systems & Tools",
+      "python": "Python Libraries"
+    },
+    "items": {
+      "iot": ["MQTT", "Modbus (TCP/RTU)", "OPC UA", "Node-RED", "OpenPLC"],
+      "databases": ["InfluxDB", "Prometheus", "MongoDB", "Grafana"],
+      "languages": ["Python", "C/C++", "JavaScript", "TypeScript", "Bash"],
+      "web": ["React", "Tailwind CSS", "Node.js", "Express", "Flask", "REST APIs", "HTML/CSS"],
+      "mobile": ["Flutter", "Dart", "API Integration", "Responsive UI"],
+      "tools": ["Docker", "Git/GitHub", "Linux", "TCP/UDP", "VPN", "TLS"],
+      "python": ["Pandas", "NumPy", "Matplotlib", "Scikit-learn", "TensorFlow Lite"]
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "viewOnGithub": "View on GitHub",
+    "list": [
+      {
+        "title": "Edge Predictive Maintenance (edge-pdm)",
+        "description": "Real-time anomaly detection system on ESP32 using TinyML. FFT analysis and lightweight autoencoder deployed on microcontroller.",
+        "tags": ["ESP32", "TensorFlow Lite", "FFT", "TinyML"],
+        "github": "https://github.com/Ziarmex/edge-pdm"
+      },
+      {
+        "title": "Secure IoT Plant (mini-plant)",
+        "description": "Secure industrial IoT plant simulation with TLS communication, real-time monitoring and alerting system.",
+        "tags": ["Docker", "MQTT", "TLS", "Grafana", "InfluxDB"],
+        "github": "https://github.com/Ziarmex/mini-plant"
+      },
+      {
+        "title": "PLC Gateway (plc-gateway)",
+        "description": "Complete industrial gateway converting PLC Modbus protocols to OPC UA with Grafana visualization.",
+        "tags": ["Modbus", "OPC UA", "Node-RED", "Grafana"],
+        "github": "https://github.com/Ziarmex/plc-gateway"
+      },
+      {
+        "title": "Industrial Monitoring Stack (monitoring-stack)",
+        "description": "Complete industrial monitoring system with real-time data collection, processing, storage and visualization.",
+        "tags": ["MQTT", "Node-RED", "InfluxDB", "Grafana", "Docker"],
+        "github": "https://github.com/Ziarmex/monitoring-stack"
+      },
+      {
+        "title": "ESP Cloud (esp-cloud)",
+        "description": "IoT platform connecting embedded hardware to a web-based control interface.",
+        "tags": ["C++", "React", "IoT", "REST API"],
+        "github": "https://github.com/Ziarmex/esp-cloud"
+      }
+    ]
+  },
+  "experience": {
+    "title": "Experience",
+    "items": [
+      {
+        "role": "Intern",
+        "company": "Sonelgaz, Distribution Directorate of Jijel",
+        "period": "June – July 2025",
+        "details": [
+          "Participated in a project to improve information systems for energy data management and analysis.",
+          "Contributed to internal process automation and reliable data exchange between applications.",
+          "Discovered the operations of a major energy company and the challenges of digitalization and operational efficiency."
+        ]
+      }
+    ]
+  },
+  "education": {
+    "title": "Education",
+    "items": [
+      {
+        "degree": "Baccalaureate in Experimental Sciences",
+        "school": "Very Good Honor – 16.87/20",
+        "period": "2022"
+      },
+      {
+        "degree": "4th Year Engineering Degree",
+        "school": "ESTIN – AI/Data Science Specialization",
+        "period": "2022 – Present"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact",
+    "email": "ziad.r.bouraoui@gmail.com",
+    "phone": "+213 659 019 559",
+    "github": "https://github.com/Ziarmex",
+    "formName": "Name",
+    "formEmail": "Email",
+    "formMessage": "Message",
+    "formSend": "Send",
+    "copyright": "All rights reserved"
+  }
+}

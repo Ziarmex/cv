@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-crimson: #cc1a1a;
+  --color-crimson-dark: #8b1111;
+  --color-crimson-darker: #5a0e0e;
+  --color-crimson-deep: #3a0000;
+}
+
+@layer base {
+  * {
+    @apply border-black/5 dark:border-white/10;
+  }
+  body {
+    @apply antialiased bg-[#fafafa] dark:bg-[#0a0000] text-gray-900 dark:text-white transition-colors duration-300;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "about": "À propos",
+    "skills": "Compétences",
+    "projects": "Projets",
+    "experience": "Expérience",
+    "education": "Formation",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Bouraoui Ziad Rafik",
+    "subtitle": "Étudiant en Informatique | IoT & IA",
+    "available": "Disponible",
+    "cta": "Voir mes projets"
+  },
+  "about": {
+    "title": "À propos",
+    "description": "Étudiant passionné par l'Internet des Objets (IoT), les systèmes connectés et l'analyse intelligente des données. Curieux de l'interconnexion entre informatique et l'industrie, j'aime concevoir des solutions qui allient capteurs, automatisation et traitement des données."
+  },
+  "skills": {
+    "title": "Compétences",
+    "categories": {
+      "iot": "IoT & Edge AI",
+      "databases": "Bases de données & Dashboards",
+      "languages": "Langages de programmation",
+      "web": "Développement Web",
+      "mobile": "Développement Mobile",
+      "tools": "Systèmes & Outils",
+      "python": "Bibliothèques Python"
+    },
+    "items": {
+      "iot": ["MQTT", "Modbus (TCP/RTU)", "OPC UA", "Node-RED", "OpenPLC"],
+      "databases": ["InfluxDB", "Prometheus", "MongoDB", "Grafana"],
+      "languages": ["Python", "C/C++", "JavaScript", "TypeScript", "Bash"],
+      "web": ["React", "Tailwind CSS", "Node.js", "Express", "Flask", "REST APIs", "HTML/CSS"],
+      "mobile": ["Flutter", "Dart", "API intégration", "UI responsive"],
+      "tools": ["Docker", "Git/GitHub", "Linux", "TCP/UDP", "VPN", "TLS"],
+      "python": ["Pandas", "NumPy", "Matplotlib", "Scikit-learn", "TensorFlow Lite"]
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "viewOnGithub": "Voir sur GitHub",
+    "list": [
+      {
+        "title": "Edge Predictive Maintenance (edge-pdm)",
+        "description": "Système de détection d'anomalies temps réel sur ESP32 avec TinyML. Analyse FFT et autoencodeur léger déployé sur microcontrôleur.",
+        "tags": ["ESP32", "TensorFlow Lite", "FFT", "TinyML"],
+        "github": "https://github.com/Ziarmex/edge-pdm"
+      },
+      {
+        "title": "Usine IoT Sécurisée (mini-plant)",
+        "description": "Simulation d'usine IoT industrielle sécurisée avec TLS, monitoring temps réel et système d'alertes.",
+        "tags": ["Docker", "MQTT", "TLS", "Grafana", "InfluxDB"],
+        "github": "https://github.com/Ziarmex/mini-plant"
+      },
+      {
+        "title": "Passerelle PLC → OPC UA (plc-gateway)",
+        "description": "Passerelle industrielle complète convertissant les protocoles Modbus PLC vers OPC UA avec visualisation Grafana.",
+        "tags": ["Modbus", "OPC UA", "Node-RED", "Grafana"],
+        "github": "https://github.com/Ziarmex/plc-gateway"
+      },
+      {
+        "title": "Monitoring Industriel (monitoring-stack)",
+        "description": "Système de supervision industriel complet avec collecte temps réel, stockage et visualisation.",
+        "tags": ["MQTT", "Node-RED", "InfluxDB", "Grafana", "Docker"],
+        "github": "https://github.com/Ziarmex/monitoring-stack"
+      },
+      {
+        "title": "ESP Cloud (esp-cloud)",
+        "description": "Plateforme IoT connectant du matériel embarqué à une interface web de contrôle.",
+        "tags": ["C++", "React", "IoT", "REST API"],
+        "github": "https://github.com/Ziarmex/esp-cloud"
+      }
+    ]
+  },
+  "experience": {
+    "title": "Expérience",
+    "items": [
+      {
+        "role": "Stagiaire",
+        "company": "Sonelgaz, Direction de Distribution de Jijel",
+        "period": "Juin – Juillet 2025",
+        "details": [
+          "Participation à un projet d'amélioration des systèmes d'information liés à la gestion et à l'analyse des données énergétiques.",
+          "Contribution à l'automatisation de processus internes et à la fiabilité des échanges de données.",
+          "Découverte du fonctionnement d'une grande entreprise du secteur de l'énergie et des enjeux de la digitalisation."
+        ]
+      }
+    ]
+  },
+  "education": {
+    "title": "Formation",
+    "items": [
+      {
+        "degree": "Baccalauréat Sciences Expérimentales",
+        "school": "Mention Très Bien – 16,87/20",
+        "period": "2022"
+      },
+      {
+        "degree": "4ème année Cycle Ingénieur",
+        "school": "ESTIN – Spécialisation AI/Data Science",
+        "period": "2022 – Aujourd'hui"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact",
+    "email": "ziad.r.bouraoui@gmail.com",
+    "phone": "+213 659 019 559",
+    "github": "https://github.com/Ziarmex",
+    "formName": "Nom",
+    "formEmail": "Email",
+    "formMessage": "Message",
+    "formSend": "Envoyer",
+    "copyright": "Tous droits réservés"
+  }
+}
