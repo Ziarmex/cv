@@ -1,30 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore, useCallback } from "react";
 import { Sun, Moon } from "@phosphor-icons/react";
 
+function getSnapshot() {
+  return document.documentElement.classList.contains("dark");
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const isDark = useSyncExternalStore(
+    () => () => {},
+    getSnapshot,
+    getServerSnapshot
+  );
 
-  useEffect(() => {
-    const stored = localStorage.getItem("theme");
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-    const theme = stored || preferred;
-    setIsDark(theme === "dark");
-    setMounted(true);
-  }, []);
-
-  const toggle = () => {
+  const toggle = useCallback(() => {
     const next = isDark ? "light" : "dark";
-    setIsDark(!isDark);
     localStorage.setItem("theme", next);
     document.documentElement.classList.toggle("dark", next === "dark");
-  };
-
-  if (!mounted) return <div className="w-5 h-5" />;
+  }, [isDark]);
 
   return (
     <button

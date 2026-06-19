@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# project repos (source material for case studies, not part of the site)
+/Projects/

@@ -33,7 +33,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const messages = messagesMap[locale as keyof typeof messagesMap] ?? fr;
+  const messages = messagesMap[locale as keyof typeof messagesMap] ?? en;
 
   return (
     <html lang={locale} suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>

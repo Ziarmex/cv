@@ -3,19 +3,22 @@
     "about": "À propos",
     "skills": "Compétences",
     "projects": "Projets",
-    "experience": "Expérience",
+    "experience": "Experience",
     "education": "Formation",
     "contact": "Contact"
   },
   "hero": {
-    "title": "Bouraoui Ziad Rafik",
-    "subtitle": "Étudiant en Informatique | IoT & IA",
-    "available": "Disponible",
-    "cta": "Voir mes projets"
+    "title": "Ziad Rafik Bouraoui",
+    "subtitle": "Étudiant en Informatique — IoT & IA",
+    "available": "Disponible pour stages",
+    "focus": "Conception de systèmes IoT industriels sécurisés et d'applications d'IA embarquée. Actuellement en 4ème année à ESTIN, spécialisation IA & Science des Données.",
+    "cta": "Voir mes projets",
+    "github": "https://github.com/Ziarmex"
   },
   "about": {
     "title": "À propos",
-    "description": "Étudiant passionné par l'Internet des Objets (IoT), les systèmes connectés et l'analyse intelligente des données. Curieux de l'interconnexion entre informatique et l'industrie, j'aime concevoir des solutions qui allient capteurs, automatisation et traitement des données."
+    "description": "Étudiant en Informatique spécialisé en IA et Science des Données, avec un focus pratique sur l'Internet des Objets, les systèmes industriels connectés et l'analyse intelligente de données.",
+    "detail": "J'aime concevoir des solutions combinant capteurs, automatisation et traitement de données — des modèles TinyML sur des microcontrôleurs à 5$ jusqu'aux plateformes de surveillance industrielles full-stack. Mes projets se situent à l'intersection du matériel, des protocoles et de l'intelligence."
   },
   "skills": {
     "title": "Compétences",
@@ -29,62 +32,259 @@
       "python": "Bibliothèques Python"
     },
     "items": {
-      "iot": ["MQTT", "Modbus (TCP/RTU)", "OPC UA", "Node-RED", "OpenPLC"],
-      "databases": ["InfluxDB", "Prometheus", "MongoDB", "Grafana"],
+      "iot": ["MQTT", "Modbus TCP/RTU", "OPC UA", "Node-RED", "OpenPLC", "TinyML"],
+      "databases": ["InfluxDB", "Prometheus", "MongoDB", "Grafana", "Flux"],
       "languages": ["Python", "C/C++", "JavaScript", "TypeScript", "Bash"],
-      "web": ["React", "Tailwind CSS", "Node.js", "Express", "Flask", "REST APIs", "HTML/CSS"],
-      "mobile": ["Flutter", "Dart", "API intégration", "UI responsive"],
-      "tools": ["Docker", "Git/GitHub", "Linux", "TCP/UDP", "VPN", "TLS"],
-      "python": ["Pandas", "NumPy", "Matplotlib", "Scikit-learn", "TensorFlow Lite"]
+      "web": ["React", "Next.js", "Tailwind CSS", "Node.js", "Express", "Flask", "REST APIs"],
+      "mobile": ["Flutter", "Dart", "API Integration", "Responsive UI"],
+      "tools": ["Docker", "Git/GitHub", "Linux", "TCP/UDP", "VPN", "TLS/mTLS"],
+      "python": ["Pandas", "NumPy", "Matplotlib", "Scikit-learn", "TensorFlow Lite", "MuJoCo"]
     }
   },
   "projects": {
     "title": "Projets",
-    "viewOnGithub": "Voir sur GitHub",
-    "list": [
+    "intro": "Une sélection de projets couvrant l'IA embarquée, l'IoT industriel, les passerelles de protocoles et la simulation robotique.",
+    "featured": [
       {
-        "title": "Edge Predictive Maintenance (edge-pdm)",
-        "description": "Système de détection d'anomalies temps réel sur ESP32 avec TinyML. Analyse FFT et autoencodeur léger déployé sur microcontrôleur.",
-        "tags": ["ESP32", "TensorFlow Lite", "FFT", "TinyML"],
+        "slug": "edge-pdm",
+        "title": "Maintenance Prédictive Embarquée",
+        "tagline": "Détection d'anomalies TinyML tenant en 25KB et fonctionnant sur un ESP32 à 5$ — sans cloud, sans serveur.",
+        "category": "AI & IoT",
+        "tags": ["TinyML", "ESP32", "TensorFlow Lite", "Détection d'anomalies", "Edge AI"],
+        "heroImage": "/projects/edge-pdm/dashboard-demo.gif",
+        "problem": "Les équipements industriels rotatifs tombent en panne progressivement, et les signaux d'alerte précoce apparaissent comme des changements subtils dans les signatures de vibration. La maintenance prédictive traditionnelle soit envoie les données brutes des capteurs vers le cloud (coûteux, latence élevée, dépendant de la connectivité), soit nécessite des analyseurs de vibration industriels dédiés qui ne peuvent pas être déployés à grande échelle sur chaque machine.",
+        "approach": "Déplacer tout le pipeline de détection sur le nœud capteur lui-même. L'ESP32 acquiert les données de vibration, extrait les caractéristiques fréquentielles par FFT, exécute un autoencoder pour la détection d'anomalies, et déclenche une alerte locale — le tout en ~215ms et ~55KB de RAM. 100% edge computing, pas de cloud.",
+        "architecture": {
+          "flow": ["Capteur @ 1kHz", "Buffer 128 échantillons", "FFT → 64 features", "StandardScaler", "TFLite Autoencoder", "MSE > seuil?", "LED alerte"],
+          "components": [
+            { "layer": "Matériel", "tech": "ESP32 DevKit (240MHz, 520KB RAM)", "role": "Device d'inférence edge + alerte LED" },
+            { "layer": "Firmware", "tech": "C++ / Arduino + TFLite Micro + arduinoFFT", "role": "Acquisition, FFT, inférence on-device" },
+            { "layer": "Modèle", "tech": "Keras Autoencoder (64→32→16→8→16→32→64)", "role": "Détection d'anomalies par erreur de reconstruction" },
+            { "layer": "Entraînement", "tech": "Python + TensorFlow + scikit-learn", "role": "Entraînement, calibration du seuil, génération C headers" },
+            { "layer": "Dashboard", "tech": "Streamlit + Plotly + NumPy", "role": "Dashboard démo live (inférence sans TensorFlow)" }
+          ],
+          "decisions": [
+            "Autoencoder plutôt qu'un classifieur — non supervisé sur données normales uniquement, pas besoin de données de défauts labellisées pour chaque mode de défaillance.",
+            "FFT comme feature, pas le signal brut — les caractéristiques fréquentielles sont plus compactes et discriminantes pour les défauts de vibration, réduisant l'entrée du modèle de 128 à 64 dimensions.",
+            "Le bottleneck latent en 8 dimensions garde le réseau assez petit pour un modèle TFLite de 24.9KB.",
+            "Tout intégré dans les constantes du firmware — le modèle entraîné, le scaler et le seuil sont générés en code C headers, l'ESP32 n'a besoin d'aucune configuration runtime.",
+            "Démo sans TensorFlow — les poids extraits en JSON et la passe avant réimplémentée en NumPy pur, le dashboard Streamlit tourne sans TensorFlow installé."
+          ]
+        },
+        "deepDive": [
+          {
+            "title": "Détection d'anomalies par erreur de reconstruction",
+            "body": "L'autoencoder est entraîné uniquement sur des spectres de vibration sains. Au runtime, l'ESP32 reconstruit chaque spectre entrant ; si l'erreur de reconstruction (MSE) dépasse un seuil, le signal est flagged comme anomalie. Le seuil est auto-dérivé du 95ème percentile de l'erreur de reconstruction sur données normales (1.151) — aucun réglage manuel par déploiement.",
+            "code": "TFLite → Autoencoder (64→32→16→8→16→32→64)\nDétection → MSE > 1.151 ? ANOMALIE : NORMAL",
+            "language": "text"
+          },
+          {
+            "title": "Bridger un modèle Keras PC vers un microcontrôleur",
+            "body": "Un générateur de code personnalisé convertit le binaire TFLite en tableau hex alignas(8) dans un header C, avec un scaler_params.h séparé contenant le seuil et les tableaux mean/scale du scaler. Cela élimine tout parsing runtime ou dépendance fichier SD sur le device.",
+            "code": "// model_data.h (généré, ~157KB)\nalignas(8) const unsigned char model_data[] = {\n  0x1c, 0x00, 0x00, 0x00, 0x54, 0x46, 0x4c, 0x03, ...\n};\n\n// scaler_params.h (généré)\n#define ANOMALY_THRESHOLD 1.1510807\nconst float scaler_mean[64] = { ... };\nconst float scaler_scale[64] = { ... };",
+            "language": "c"
+          },
+          {
+            "title": "Boucle d'inférence on-device",
+            "body": "Chaque cycle : acquisition 128 échantillons (128ms), FFT avec fenêtre de Hamming (15ms), normalisation (2ms), inférence TFLite (~85ms), comparaison MSE au seuil, allumage LED sur anomalie. Latence totale ~215ms — largement sous la cible de 500ms.",
+            "code": "Inférence #10 | Error: 0.023456 | Anomalies: 1/10 | Temps: 87ms (Moy: 89.3ms)\nANOMALIE DÉTECTÉE!",
+            "language": "text"
+          }
+        ],
+        "results": [
+          { "label": "Taille du modèle", "value": "24.9 KB" },
+          { "label": "Temps d'inférence", "value": "~85 ms" },
+          { "label": "Précision de détection", "value": "95%" },
+          { "label": "Utilisation RAM", "value": "~55 KB" }
+        ],
+        "demoFeatures": [
+          "Le moniteur série ESP32 stream les stats d'inférence live avec compteur d'anomalies et timing",
+          "La LED intégrée s'allume immédiatement à la détection d'une anomalie",
+          "Fonctionne avec des signaux simulés out-of-the-box ou un vrai accéléromètre ADXL345 via un flag",
+          "Dashboard Streamlit avec waveform temps réel, spectre FFT, jauge d'erreur et historique roulant",
+          "Suite de validation complète assertant modèle < 100KB, précision > 80%, et intégrité des C headers"
+        ],
+        "lessons": [
+          "Faire tenir un réseau de neurones dans ~160KB de DRAM libre a nécessité un tensor arena fixe de 30KB et des buffers FFT soigneusement dimensionnés — le tuning mémoire est documenté.",
+          "Bridger un modèle Keras entraîné sur PC vers un microcontrôleur a requis un générateur de code émettant des headers C — aucun file I/O runtime sur le device.",
+          "Découpler la démo de TensorFlow en réimplémentant la passe avant en ~45 lignes de NumPy a rendu le dashboard cloud économique à héberger et rapide à cold-start.",
+          "Engineering de seuil sans labels pour chaque mode de défaut — l'approche du 95ème percentile s'auto-calibre et le README documente le tradeoff de sensibilité pour les opérateurs."
+        ],
         "github": "https://github.com/Ziarmex/edge-pdm"
       },
       {
-        "title": "Usine IoT Sécurisée (mini-plant)",
-        "description": "Simulation d'usine IoT industrielle sécurisée avec TLS, monitoring temps réel et système d'alertes.",
-        "tags": ["Docker", "MQTT", "TLS", "Grafana", "InfluxDB"],
+        "slug": "mini-plant",
+        "title": "Mini-Usine IoT Sécurisée",
+        "tagline": "Simulation entièrement conteneurisée d'une mini-usine IoT industrielle sécurisée — 6 devices streament de la télémétrie en MQTT mutual-TLS vers un stack Grafana de monitoring temps réel.",
+        "category": "IoT Industriel",
+        "tags": ["MQTT/mTLS", "InfluxDB", "Grafana", "Docker Compose", "Python", "TLS/PKI"],
+        "problem": "Les déploiements IoT industriels vivent ou meurent sur trois choses : communication sécurisée device-to-broker, ingestion time-series fiable à grande échelle, et observabilité temps réel avec alerting. La plupart des tutoriels bâclent la sécurité ou ajoutent le monitoring comme après-coup.",
+        "approach": "Construire un stack IIoT de référence end-to-end et production-shaped où chaque message device-to-broker est chiffré et mutuellement authentifié (mTLS), les données hétérogènes de capteurs sont normalisées dans un seul store time-series, et les opérateurs ont un dashboard Grafana live auto-provisionné avec alerting par seuils.",
+        "architecture": {
+          "flow": ["6 Simulateurs IoT", "MQTT/mTLS :8883", "Broker Mosquitto", "Bridge Python", "InfluxDB 2.7", "Dashboard Grafana"],
+          "components": [
+            { "layer": "Messaging", "tech": "Eclipse Mosquitto 2.0", "role": "MQTTS sur 8883 avec mTLS, plaintext interne sur 1883" },
+            { "layer": "Ingestion", "tech": "Bridge Python (paho-mqtt + requests)", "role": "Souscrit à iot/plant/#, écrit InfluxDB line protocol" },
+            { "layer": "Stockage", "tech": "InfluxDB 2.7 (Flux)", "role": "Base time-series, rétention 30 jours, auth par token" },
+            { "layer": "Visualisation", "tech": "Grafana (auto-provisionné)", "role": "Dashboard 8 panneaux, refresh 10s, alertes SMTP" },
+            { "layer": "PKI", "tech": "OpenSSL (generate-certs.sh)", "role": "CA auto-signé (4096-bit) + certs server/client" },
+            { "layer": "Orchestration", "tech": "Docker Compose", "role": "8 services, bridge network, 5 volumes nommés" }
+          ],
+          "decisions": [
+            "Bridge Python personnalisé plutôt que Node-RED — un subscriber/writer de ~90 lignes a moins de parties mobiles, un container plus petit, et un contrôle programmatique complet sur le filtrage de champs et la construction line-protocol.",
+            "Design two-listener du broker — mTLS sur 8883 pour les devices, plaintext interne sur 1883 pour les services backend dans le réseau Docker, évitant la redondance TLS sur le fabric interne de confiance.",
+            "Sécurité d'abord, sécurité forcée — TLS 1.2 obligatoire avec vérification mutuelle des certificats ; une suite de 5 tests de sécurité automatisée prouve que les connexions plaintext et bad-cert sont refusées.",
+            "Provisioning infrastructure-as-code — la datasource et le dashboard Grafana sont provisionnés depuis YAML/JSON au démarrage, aucune configuration UI manuelle.",
+            "Durcissement des containers — le simulateur tourne en utilisateur non-root (uid 1000), les clés privées sont chmod 600, certs/ est gitignored."
+          ]
+        },
+        "deepDive": [
+          {
+            "title": "Mutual TLS pour chaque device",
+            "body": "Le port externe du broker (8883) requiert TLS 1.2 avec vérification mutuelle des certificats (require_certificate true). Une suite de 5 tests de sécurité automatisée valide que les connexions plaintext sont refusées, les connexions bad-cert sont refusées, le mTLS valide réussit, TLS 1.2 est forcé, et la vérification stricte des certificats est active.",
+            "code": "listener 8883\ncertfile /certs/server.crt\nkeyfile /certs/server.key\ncafile /certs/ca.crt\nrequire_certificate true\ntls_version tlsv1.2",
+            "language": "conf"
+          },
+          {
+            "title": "Bridge Python : MQTT vers InfluxDB",
+            "body": "Un service Python de ~90 lignes souscrit à iot/plant/#, parse les payloads JSON, et écrit les points InfluxDB line-protocol via HTTP. Surface d'attaque plus petite que Node-RED, moins de containers, entièrement scriptable.",
+            "code": "def on_message(client, userdata, msg):\n    payload = json.loads(msg.payload.decode())\n    device_type = msg.topic.split('/')[2]\n    fields = {k: v for k, v in payload.items() if isinstance(v, (int, float))}\n    line = f\"{device_type},device_id={payload['device_id']} \" + \\\n           \",\".join(f\"{k}={v}\" for k, v in fields.items())\n    requests.post(f\"{INFLUX_URL}/api/v2/write?bucket=iot-data&precision=s\",\n                  data=line, headers={\"Authorization\": f\"Token {INFLUX_TOKEN}\"})",
+            "language": "python"
+          },
+          {
+            "title": "6 devices simulés avec injection d'anomalies",
+            "body": "Chaque simulateur est un processus Python conteneurisé émettant une télémétrie réaliste : 2 machines de production (5% de panne aléatoire), capteur de température (2% de spike, alerte à 80°C), capteur de pression (3% de surpression, alerte à 5 bar), capteur de vibration (4% d'anomalie sur un axe aléatoire), et un compteur d'énergie. Schéma de topics MQTT : iot/plant/{device_type}/{device_id}."
+          }
+        ],
+        "results": [
+          { "label": "Latence bout-en-bout", "value": "< 2s" },
+          { "label": "Tests de sécurité", "value": "5/5 (100%)" },
+          { "label": "Devices concurrents", "value": "10+ testés" },
+          { "label": "Services Docker", "value": "8" }
+        ],
+        "demoFeatures": [
+          "Démarrage en une seule commande : docker-compose up -d lance tout le stack de 8 services",
+          "Dashboard Grafana live sur localhost:3001 avec 8 panneaux auto-provisionnés",
+          "Injection d'anomalies temps réel visible comme blips sur le dashboard en quelques secondes",
+          "Suite de tests de sécurité TLS automatisée avec 100% de réussite",
+          "Horizontalement scalable — ajouter un device = dupliquer un bloc de service compose"
+        ],
+        "lessons": [
+          "Node-RED a été remplacé par un bridge Python de ~90 lignes — les outils de glue prêts à l'emploi ajoutent du poids opérationnel ; un service purpose-built fin est plus clair pour un pipeline fixe.",
+          "Les SAN des certificats doivent couvrir à la fois l'alias DNS Docker et localhost pour la validation depuis l'intérieur et l'extérieur du réseau.",
+          "depends_on attend uniquement le démarrage du container, pas la readiness du service — toujours coder les clients MQTT pour retry avec backoff.",
+          "Intégrer le least-privilege dans l'image Docker (utilisateur non-root, clés chmod 600), pas au runtime."
+        ],
         "github": "https://github.com/Ziarmex/mini-plant"
       },
       {
-        "title": "Passerelle PLC → OPC UA (plc-gateway)",
-        "description": "Passerelle industrielle complète convertissant les protocoles Modbus PLC vers OPC UA avec visualisation Grafana.",
-        "tags": ["Modbus", "OPC UA", "Node-RED", "Grafana"],
+        "slug": "plc-gateway",
+        "title": "Passerelle PLC",
+        "tagline": "Passerelle de protocole industriel faisant le pont entre les PLC Modbus TCP legacy et l'OPC UA moderne, avec analytique temps réel et visualisation Grafana.",
+        "category": "IoT Industriel",
+        "tags": ["Modbus TCP", "OPC UA", "Node-RED", "Docker Compose", "InfluxDB", "Grafana"],
+        "problem": "Les usines modernes font tourner un mix d'équipements legacy et modernes. Les PLC plus anciens exposent les données uniquement via Modbus TCP — un protocole simple basé sur des registres — tandis que les systèmes SCADA/MES/IIoT modernes attendent de l'OPC UA, un protocole plus riche, standardisé, avec tags sémantiques. Faire le pont manuellement est fastidieux : poller les registres, décoder les mises à l'échelle en virgule fixe, réassembler les compteurs 32-bit splités sur deux registres 16-bit, mapper les bitfields en états significatifs.",
+        "approach": "Construire un pipeline Dockerized self-contained qui lit les données live d'un PLC industriel (simulé) en Modbus, les expose en OPC UA, puis les stream à travers Node-RED pour le traitement vers InfluxDB et les dashboards Grafana — le tout en un seul docker compose up reproductible.",
+        "architecture": {
+          "flow": ["Simulateur PLC :5020", "Poll Modbus (1s)", "Passerelle → OPC UA :4840", "Node-RED :1880", "InfluxDB :8086", "Grafana :3000"],
+          "components": [
+            { "layer": "Simulateur", "tech": "Python + pymodbus 3.5.2", "role": "Simule un PLC avec 11 holding registers, sine-wave + bruit" },
+            { "layer": "Passerelle", "tech": "Node.js + node-opcua + modbus-serial", "role": "Bridge Modbus→OPC UA, décodage fixed-point, auto-reconnect" },
+            { "layer": "Traitement", "tech": "Node-RED (plugins opcua + influxdb)", "role": "Analytique dérivée : puissance, taux, moyennes mobiles, flags d'anomalie" },
+            { "layer": "Stockage", "tech": "InfluxDB 2.7 (Flux)", "role": "7 measurements, précision ns" },
+            { "layer": "Visualisation", "tech": "Grafana (auto-provisionné)", "role": "Dashboard 9 panneaux, refresh 5s, jauges + time-series" },
+            { "layer": "Tests", "tech": "Harness de test Bash (221 lignes)", "role": "Validation automatisée en 6 phases" }
+          ],
+          "decisions": [
+            "Polling cyclique avec auto-reconnect — poll Modbus chaque 1s, ferme le socket et retry après 3s en cas d'échec, robuste face aux redémarrages de PLC.",
+            "Getters OPC UA paresseux — chaque nœud utilise une closure get() lisant plcData en mémoire, donc l'address space reflète toujours le dernier poll.",
+            "Décodage fixed-point à la passerelle — température en 0.1°C, pression en 0.01 Bar, vibration en 0.01 mm/s, tous décodés à la couche bridge.",
+            "Réassemblage du compteur 32-bit — le count de production splité sur deux registres 16-bit, recombiné avec (high << 16) | low.",
+            "Séparation traduction vs. analytique — la passerelle reste un pure protocol bridge (<100ms), tout le calcul dérivé vit dans Node-RED."
+          ]
+        },
+        "deepDive": [
+          {
+            "title": "Adaptation d'impédance de protocole : Modbus → OPC UA",
+            "body": "Modbus est des registres 16-bit plats avec scaling implicite hors bande. OPC UA est un modèle d'objets typé, hiérarchique, browsable. La passerelle invente la structure de l'address space (dossier PLC_Data + variables typées) et encode toute la connaissance du scaling fixed-point à un seul endroit.",
+            "code": "// Address space OPC UA exposé sous Objects/PLC_Data/\nMotorSpeed    (Double)\nTemperature   (Double, ×0.1 °C)\nPressure      (Double, ×0.01 Bar)\nVibration     (Double, ×0.01 mm/s)\nCurrent       (Double, ×0.1 A)\nProductionCount (UInt32, (reg[6]<<16)|reg[7])\nMachineState  (String: Stop/Start/Run/Alarm)\nMotorOn       (Boolean, status & 0x01)\nAlarmActive   (Boolean, status & 0x08)",
+            "language": "text"
+          },
+          {
+            "title": "Mapping bitfield vers sémantique",
+            "body": "Un seul registre de status contient plusieurs états booléens packés en bits. La passerelle les dépaquette avec des masques en nœuds OPC UA Boolean distincts pour que les consommateurs downstream n'aient pas besoin de connaître les positions des bits.",
+            "code": "const MotorOn     = (status & 0x01) !== 0;\nconst TempHigh    = (status & 0x02) !== 0;\nconst PressureHigh = (status & 0x04) !== 0;\nconst AlarmActive = (status & 0x08) !== 0;\nconst VibrationHigh = (status & 0x10) !== 0;",
+            "language": "javascript"
+          },
+          {
+            "title": "Analytique dérivée dans Node-RED",
+            "body": "Plutôt que de dumper des valeurs brutes, Node-RED calcule la puissance triphasée (√3 × 400 × I × 0.85 / 1000), le taux de production par heure, les moyennes mobiles, l'écart-type, et les flags d'anomalie de déviation par rapport à la moyenne — tout avant l'écriture dans InfluxDB."
+          }
+        ],
+        "results": [
+          { "label": "Latence de conversion", "value": "50-100ms" },
+          { "label": "CPU par service", "value": "< 5%" },
+          { "label": "Mémoire totale", "value": "~300 MB" },
+          { "label": "Panneaux Grafana", "value": "9" }
+        ],
+        "demoFeatures": [
+          "Aucun PLC physique requis — le simulateur génère sine-wave + bruit avec 2% de déclenchement d'alarme aléatoire",
+          "Une seule commande : docker compose build && docker compose up -d",
+          "Dashboard Grafana 9 panneaux avec jauges, stat panels et time-series (auto-refresh 5s)",
+          "Harness de test automatisé de 221 lignes couvrant ports, containers, lectures Modbus, logs de conversion, écritures InfluxDB et dashboards Grafana",
+          "Alarmes de température, spikes de vibration et transitions d'état apparaissent naturellement en quelques minutes"
+        ],
+        "lessons": [
+          "L'inadéquation d'impédance de protocole entre Modbus (16-bit plat, scaling implicite) et OPC UA (typé, hiérarchique, browsable) a nécessité d'inventer la structure de l'address space et d'encoder le scaling à un seul endroit.",
+          "Réassembler des valeurs 32-bit sur deux registres 16-bit nécessite la bonne endianness — (high << 16) | low — un piège Modbus classique.",
+          "Résilience de connexion sur des réseaux industriels — close-on-error + auto-reconnect différé vaut mieux que crasher, avec logging structuré winston pour l'observabilité.",
+          "Reproductibilité sans matériel — construire un simulateur PLC fidèle (sine-wave + bruit + alarmes stochastiques) a rendu tout le stack démontrable sur un laptop."
+        ],
         "github": "https://github.com/Ziarmex/plc-gateway"
+      }
+    ],
+    "other": [
+      {
+        "title": "ESP Cloud",
+        "description": "Plateforme IoT full-stack : serveur web embarqué C++ sur ESP32 avec API REST + WebSocket, piloté par un dashboard Next.js. Composants matériel hot-registerable survivant aux reboots.",
+        "tags": ["ESP32", "C++", "REST API", "WebSockets", "Next.js"],
+        "category": "Full-stack",
+        "github": "https://github.com/Ziarmex/esp-cloud"
       },
       {
-        "title": "Monitoring Industriel (monitoring-stack)",
-        "description": "Système de supervision industriel complet avec collecte temps réel, stockage et visualisation.",
+        "title": "Stack de Monitoring Industriel",
+        "description": "Pipeline de monitoring self-contained : MQTT → Node-RED → InfluxDB → Grafana, entièrement conteneurisé avec auto-provisioning zero-config de tous les services.",
         "tags": ["MQTT", "Node-RED", "InfluxDB", "Grafana", "Docker"],
+        "category": "IoT",
         "github": "https://github.com/Ziarmex/monitoring-stack"
       },
       {
-        "title": "ESP Cloud (esp-cloud)",
-        "description": "Plateforme IoT connectant du matériel embarqué à une interface web de contrôle.",
-        "tags": ["C++", "React", "IoT", "REST API"],
-        "github": "https://github.com/Ziarmex/esp-cloud"
+        "title": "Smart Parking IoT",
+        "description": "ESP32 + 6× capteurs ultrasoniques HC-SR04 servant l'occupation des places de parking en JSON, avec un dashboard Next.js animé et auto-détection des transducers au boot.",
+        "tags": ["ESP32", "HC-SR04", "Next.js", "framer-motion"],
+        "category": "IoT",
+        "github": "https://github.com/Ziarmex/parking-iot"
+      },
+      {
+        "title": "Simulateur Drone Skydio X2",
+        "description": "Simulateur de vol de drone physique 6-DOF dans MuJoCo avec un contrôleur PID modulaire (anti-windup, derivée sur mesure, filtre passe-bas), vol clavier temps réel et parcours d'obstacles.",
+        "tags": ["MuJoCo", "Python", "PID Control", "Robotique"],
+        "category": "AI & Robotique",
+        "github": "https://github.com/Ziarmex/skydio_x2"
       }
     ]
   },
   "experience": {
-    "title": "Expérience",
+    "title": "Experience",
     "items": [
       {
-        "role": "Stagiaire",
-        "company": "Sonelgaz, Direction de Distribution de Jijel",
+        "role": "Stagiaire — Systèmes d'Information",
+        "company": "Sonelgaz, Direction de la Distribution de Jijel",
         "period": "Juin – Juillet 2025",
         "details": [
-          "Participation à un projet d'amélioration des systèmes d'information liés à la gestion et à l'analyse des données énergétiques.",
-          "Contribution à l'automatisation de processus internes et à la fiabilité des échanges de données.",
-          "Découverte du fonctionnement d'une grande entreprise du secteur de l'énergie et des enjeux de la digitalisation."
+          "Participation à un projet d'amélioration des systèmes d'information pour la gestion et l'analyse des données énergétiques.",
+          "Contribution à l'automatisation des processus internes et à l'échange fiable de données entre applications.",
+          "Découverte du fonctionnement d'une grande entreprise énergétique et des enjeux de la digitalisation et de l'efficacité opérationnelle."
         ]
       }
     ]
@@ -93,26 +293,38 @@
     "title": "Formation",
     "items": [
       {
-        "degree": "Baccalauréat Sciences Expérimentales",
-        "school": "Mention Très Bien – 16,87/20",
-        "period": "2022"
+        "degree": "4ème année Diplôme d'Ingénieur — IA & Science des Données",
+        "school": "ESTIN — École Supérieure d'Informatique",
+        "period": "2022 – Présent"
       },
       {
-        "degree": "4ème année Cycle Ingénieur",
-        "school": "ESTIN – Spécialisation AI/Data Science",
-        "period": "2022 – Aujourd'hui"
+        "degree": "Baccalauréat en Sciences Expérimentales",
+        "school": "Mention Très Bien — 16.87/20",
+        "period": "2022"
       }
     ]
   },
   "contact": {
     "title": "Contact",
+    "heading": "Construisons quelque chose.",
+    "subheading": "Ouvert aux opportunités de stage en IoT, IA embarquée et systèmes industriels. Contactez-moi — je réponds vite.",
     "email": "ziad.r.bouraoui@gmail.com",
     "phone": "+213 659 019 559",
     "github": "https://github.com/Ziarmex",
-    "formName": "Nom",
-    "formEmail": "Email",
-    "formMessage": "Message",
-    "formSend": "Envoyer",
     "copyright": "Tous droits réservés"
+  },
+  "caseStudy": {
+    "back": "Projets",
+    "problem": "Problème",
+    "approach": "Approche",
+    "architecture": "Architecture",
+    "stack": "Tech Stack",
+    "decisions": "Décisions clés",
+    "deepDive": "Deep Dive",
+    "results": "Résultats",
+    "demoFeatures": "Fonctionnalités démo",
+    "lessons": "Leçons apprises",
+    "viewSource": "Voir le code source",
+    "nextProject": "Projet suivant"
   }
 }

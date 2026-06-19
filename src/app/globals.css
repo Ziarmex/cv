@@ -4,10 +4,9 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-crimson: #cc1a1a;
-  --color-crimson-dark: #8b1111;
-  --color-crimson-darker: #5a0e0e;
-  --color-crimson-deep: #3a0000;
+  --color-crimson: #e11d48;
+  --color-crimson-dark: #9f1239;
+  --color-crimson-deep: #6b0d1f;
 }
 
 @layer base {
@@ -15,10 +14,22 @@
     @apply border-black/5 dark:border-white/10;
   }
   body {
-    @apply antialiased bg-[#fafafa] dark:bg-[#0a0000] text-gray-900 dark:text-white transition-colors duration-300;
+    @apply antialiased bg-[#fafafa] dark:bg-[#0a0a0b] text-gray-900 dark:text-white transition-colors duration-300;
+  }
+  ::selection {
+    @apply bg-crimson/20 text-crimson-dark dark:text-white;
   }
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .eyebrow {
+    @apply text-[11px] font-mono uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400;
+  }
 }

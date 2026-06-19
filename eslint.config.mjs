@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Project repos used as content source, not part of the site
+    "Projects/**",
+    "node_modules/**",
   ]),
 ]);
 

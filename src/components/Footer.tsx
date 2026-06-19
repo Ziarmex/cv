@@ -9,13 +9,13 @@ export default function Footer() {
   return (
     <footer className="py-8 border-t border-black/5 dark:border-white/10">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-500 dark:text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-500 font-mono">
           &copy; {new Date().getFullYear()} Ziad Rafik Bouraoui. {t("copyright")}
         </p>
         <div className="flex items-center gap-4">
           <a
             href="mailto:ziad.r.bouraoui@gmail.com"
-            className="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="text-gray-500 hover:text-crimson transition-colors"
             aria-label="Email"
           >
             <Envelope size={18} weight="duotone" />
@@ -24,7 +24,7 @@ export default function Footer() {
             href="https://github.com/Ziarmex"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="text-gray-500 hover:text-crimson transition-colors"
             aria-label="GitHub"
           >
             <GithubLogo size={18} weight="duotone" />

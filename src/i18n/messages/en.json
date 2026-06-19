@@ -8,14 +8,17 @@
     "contact": "Contact"
   },
   "hero": {
-    "title": "Bouraoui Ziad Rafik",
-    "subtitle": "Computer Science Student | IoT & AI",
-    "available": "Available",
-    "cta": "View my projects"
+    "title": "Ziad Rafik Bouraoui",
+    "subtitle": "Computer Science Student — IoT & AI",
+    "available": "Available for internships",
+    "focus": "Building secure industrial IoT systems and edge AI applications. Currently in my 4th year at ESTIN, specializing in AI & Data Science.",
+    "cta": "View my work",
+    "github": "https://github.com/Ziarmex"
   },
   "about": {
     "title": "About",
-    "description": "A passionate student in the Internet of Things (IoT), connected systems, and intelligent data analysis. Curious about the interconnection between computing and industry, I enjoy designing solutions that combine sensors, automation, and data processing."
+    "description": "I'm a Computer Science student specializing in AI and Data Science, with a hands-on focus on the Internet of Things, connected industrial systems, and intelligent data analysis.",
+    "detail": "I enjoy designing solutions that combine sensors, automation, and data processing — from TinyML models running on $5 microcontrollers to full-stack industrial monitoring platforms. My projects live at the intersection of hardware, protocols, and intelligence."
   },
   "skills": {
     "title": "Skills",
@@ -29,48 +32,245 @@
       "python": "Python Libraries"
     },
     "items": {
-      "iot": ["MQTT", "Modbus (TCP/RTU)", "OPC UA", "Node-RED", "OpenPLC"],
-      "databases": ["InfluxDB", "Prometheus", "MongoDB", "Grafana"],
+      "iot": ["MQTT", "Modbus TCP/RTU", "OPC UA", "Node-RED", "OpenPLC", "TinyML"],
+      "databases": ["InfluxDB", "Prometheus", "MongoDB", "Grafana", "Flux"],
       "languages": ["Python", "C/C++", "JavaScript", "TypeScript", "Bash"],
-      "web": ["React", "Tailwind CSS", "Node.js", "Express", "Flask", "REST APIs", "HTML/CSS"],
+      "web": ["React", "Next.js", "Tailwind CSS", "Node.js", "Express", "Flask", "REST APIs"],
       "mobile": ["Flutter", "Dart", "API Integration", "Responsive UI"],
-      "tools": ["Docker", "Git/GitHub", "Linux", "TCP/UDP", "VPN", "TLS"],
-      "python": ["Pandas", "NumPy", "Matplotlib", "Scikit-learn", "TensorFlow Lite"]
+      "tools": ["Docker", "Git/GitHub", "Linux", "TCP/UDP", "VPN", "TLS/mTLS"],
+      "python": ["Pandas", "NumPy", "Matplotlib", "Scikit-learn", "TensorFlow Lite", "MuJoCo"]
     }
   },
   "projects": {
     "title": "Projects",
-    "viewOnGithub": "View on GitHub",
-    "list": [
+    "intro": "A selection of projects spanning edge AI, industrial IoT, protocol gateways, and robotics simulation.",
+    "featured": [
       {
-        "title": "Edge Predictive Maintenance (edge-pdm)",
-        "description": "Real-time anomaly detection system on ESP32 using TinyML. FFT analysis and lightweight autoencoder deployed on microcontroller.",
-        "tags": ["ESP32", "TensorFlow Lite", "FFT", "TinyML"],
+        "slug": "edge-pdm",
+        "title": "Edge Predictive Maintenance",
+        "tagline": "TinyML anomaly detection that fits in 25KB and runs on a $5 ESP32 — no cloud, no server.",
+        "category": "AI & IoT",
+        "tags": ["TinyML", "ESP32", "TensorFlow Lite", "Anomaly Detection", "Edge AI"],
+        "heroImage": "/projects/edge-pdm/dashboard-demo.gif",
+        "problem": "Industrial rotating equipment fails gradually, and the early warning signs show up as subtle changes in vibration signatures. Traditional predictive maintenance either streams raw sensor data to the cloud (expensive, latency-bound, connectivity-dependent) or requires dedicated industrial vibration analyzers that can't be deployed at scale on every machine.",
+        "approach": "Move the entire detection pipeline onto the sensor node itself. The ESP32 acquires vibration data, extracts frequency features via FFT, runs a neural-network autoencoder for anomaly detection, and raises a local alert — all within ~215ms and ~55KB of RAM. 100% edge computing, no cloud required.",
+        "architecture": {
+          "flow": ["Sensor @ 1kHz", "Buffer 128 samples", "FFT → 64 features", "StandardScaler", "TFLite Autoencoder", "MSE > threshold?", "LED alert"],
+          "components": [
+            { "layer": "Hardware", "tech": "ESP32 DevKit (240MHz, 520KB RAM)", "role": "Edge inference device + LED alert" },
+            { "layer": "Firmware", "tech": "C++ / Arduino + TFLite Micro + arduinoFFT", "role": "Acquisition, FFT, on-device inference" },
+            { "layer": "Model", "tech": "Keras Autoencoder (64→32→16→8→16→32→64)", "role": "Anomaly detection via reconstruction error" },
+            { "layer": "Training", "tech": "Python + TensorFlow + scikit-learn", "role": "Model training, threshold calibration, C header generation" },
+            { "layer": "Dashboard", "tech": "Streamlit + Plotly + NumPy", "role": "Live demo dashboard (TF-free inference)" }
+          ],
+          "decisions": [
+            "Autoencoder over a classifier — unsupervised on normal data only, no need for labeled fault data for every failure mode.",
+            "FFT as the feature, not raw waveform — frequency-domain features are more compact and discriminative for vibration faults, shrinking model input from 128 to 64 dimensions.",
+            "8-dim latent bottleneck keeps the network small enough to deploy as a 24.9KB TFLite model.",
+            "Bake everything into firmware constants — the trained model, scaler, and threshold are code-generated into C headers, so the ESP32 needs zero runtime configuration.",
+            "TF-free demo path — weights extracted to JSON and forward pass reimplemented in pure NumPy, so the Streamlit dashboard runs without TensorFlow installed."
+          ]
+        },
+        "deepDive": [
+          {
+            "title": "Anomaly detection via reconstruction error",
+            "body": "The autoencoder is trained on only healthy vibration spectra. At runtime, the ESP32 reconstructs each incoming spectrum; if the reconstruction error (MSE) exceeds a threshold, the signal is flagged anomalous. The threshold is auto-derived as the 95th percentile of normal-data reconstruction error (1.151) — no manual tuning per deployment.",
+            "code": "TFLite → Autoencoder (64→32→16→8→16→32→64)\nDetection → MSE > 1.151 ? ANOMALY : NORMAL",
+            "language": "text"
+          },
+          {
+            "title": "Bridging PC-trained Keras to a microcontroller",
+            "body": "A custom code generator converts the TFLite binary into an alignas(8) hex array in a C header, along with a separate scaler_params.h containing the threshold and scaler mean/scale arrays. This eliminates any runtime parsing or SD-card file dependency on the device.",
+            "code": "// model_data.h (generated, ~157KB)\nalignas(8) const unsigned char model_data[] = {\n  0x1c, 0x00, 0x00, 0x00, 0x54, 0x46, 0x4c, 0x03, ...\n};\n\n// scaler_params.h (generated)\n#define ANOMALY_THRESHOLD 1.1510807\nconst float scaler_mean[64] = { ... };\nconst float scaler_scale[64] = { ... };",
+            "language": "c"
+          },
+          {
+            "title": "On-device inference loop",
+            "body": "Each cycle: acquire 128 samples (128ms), compute FFT with Hamming window (15ms), normalize (2ms), run TFLite inference (~85ms), compare MSE to threshold, light LED on anomaly. Total cycle latency ~215ms — well under the 500ms target.",
+            "code": "Inférence #10 | Error: 0.023456 | Anomalies: 1/10 | Temps: 87ms (Moy: 89.3ms)\nANOMALIE DÉTECTÉE!",
+            "language": "text"
+          }
+        ],
+        "results": [
+          { "label": "Model size", "value": "24.9 KB" },
+          { "label": "Inference time", "value": "~85 ms" },
+          { "label": "Detection accuracy", "value": "95%" },
+          { "label": "RAM usage", "value": "~55 KB" }
+        ],
+        "demoFeatures": [
+          "ESP32 serial monitor streams live inference stats with anomaly count and timing",
+          "On-board LED lights up immediately on anomaly detection",
+          "Works with simulated signals out-of-the-box or real ADXL345 accelerometer via one flag",
+          "Streamlit dashboard with real-time waveform, FFT spectrum, error gauge, and rolling history",
+          "Full validation suite asserting model < 100KB, accuracy > 80%, and C header integrity"
+        ],
+        "lessons": [
+          "Fitting a neural net in ~160KB of free DRAM required a fixed 30KB tensor arena and carefully sized FFT buffers — memory tuning is documented for retuning.",
+          "Bridging a PC-trained Keras model to a microcontroller required a custom code generator emitting C headers — no runtime file I/O on the device.",
+          "Decoupling the demo from TensorFlow by reimplementing the forward pass in ~45 lines of NumPy made the cloud dashboard cheap to host and fast to cold-start.",
+          "Threshold engineering without labels for every fault mode — the 95th-percentile approach auto-calibrates and the README documents the sensitivity tradeoff for operators."
+        ],
         "github": "https://github.com/Ziarmex/edge-pdm"
       },
       {
-        "title": "Secure IoT Plant (mini-plant)",
-        "description": "Secure industrial IoT plant simulation with TLS communication, real-time monitoring and alerting system.",
-        "tags": ["Docker", "MQTT", "TLS", "Grafana", "InfluxDB"],
+        "slug": "mini-plant",
+        "title": "Secure IoT Mini-Plant",
+        "tagline": "A fully containerized simulation of a secure industrial IoT plant — 6 devices stream telemetry over mutual-TLS MQTT into a real-time Grafana monitoring stack.",
+        "category": "Industrial IoT",
+        "tags": ["MQTT/mTLS", "InfluxDB", "Grafana", "Docker Compose", "Python", "TLS/PKI"],
+        "problem": "Industrial IoT deployments live or die on three things: secure device-to-broker communication, reliable time-series ingestion at scale, and real-time observability with alerting. Most tutorials hand-wave the security layer or bolt on monitoring as an afterthought.",
+        "approach": "Build an end-to-end, production-shaped IIoT reference stack where every device-to-broker message is encrypted and mutually authenticated (mTLS), heterogeneous sensor data is normalized into a single time-series store, and operators get a live auto-provisioned Grafana dashboard with threshold-based alerting.",
+        "architecture": {
+          "flow": ["6 IoT Simulators", "MQTT/mTLS :8883", "Mosquitto Broker", "Python Bridge", "InfluxDB 2.7", "Grafana Dashboard"],
+          "components": [
+            { "layer": "Messaging", "tech": "Eclipse Mosquitto 2.0", "role": "MQTTS on 8883 with mTLS, internal plaintext on 1883" },
+            { "layer": "Ingestion", "tech": "Python bridge (paho-mqtt + requests)", "role": "Subscribes to iot/plant/#, writes InfluxDB line protocol" },
+            { "layer": "Storage", "tech": "InfluxDB 2.7 (Flux)", "role": "Time-series DB, 30-day retention, token auth" },
+            { "layer": "Visualization", "tech": "Grafana (auto-provisioned)", "role": "8-panel dashboard, 10s refresh, SMTP alerts" },
+            { "layer": "PKI", "tech": "OpenSSL (generate-certs.sh)", "role": "Self-signed CA (4096-bit) + server/client certs" },
+            { "layer": "Orchestration", "tech": "Docker Compose", "role": "8 services, bridge network, 5 named volumes" }
+          ],
+          "decisions": [
+            "Custom Python bridge over Node-RED — a ~90-line subscriber/writer has fewer moving parts, smaller container, and full programmatic control over field filtering and line-protocol construction.",
+            "Two-listener broker design — mTLS on 8883 for devices, internal plaintext on 1883 for backend services inside the Docker network, avoiding redundant TLS on the trusted internal fabric.",
+            "Security first, security enforced — TLS 1.2 is mandatory with mutual certificate verification; a 5-test automated security suite proves plaintext and bad-cert connections are refused.",
+            "Infrastructure-as-code provisioning — Grafana datasource and dashboard are provisioned from YAML/JSON on startup, no manual UI configuration.",
+            "Container hardening — simulator runs as a non-root user (uid 1000), private keys are chmod 600, certs/ is gitignored."
+          ]
+        },
+        "deepDive": [
+          {
+            "title": "Mutual TLS for every device",
+            "body": "The external broker port (8883) requires TLS 1.2 with mutual certificate verification (require_certificate true). An automated 5-test security suite validates that plaintext connections are refused, wrong-cert connections are refused, valid mTLS succeeds, TLS 1.2 is enforced, and strict certificate verification is active.",
+            "code": "listener 8883\ncertfile /certs/server.crt\nkeyfile /certs/server.key\ncafile /certs/ca.crt\nrequire_certificate true\ntls_version tlsv1.2",
+            "language": "conf"
+          },
+          {
+            "title": "Python bridge: MQTT to InfluxDB",
+            "body": "A ~90-line Python service subscribes to iot/plant/#, parses JSON payloads, and writes InfluxDB line-protocol points via HTTP. Smaller attack surface than Node-RED, fewer containers, fully scriptable.",
+            "code": "def on_message(client, userdata, msg):\n    payload = json.loads(msg.payload.decode())\n    device_type = msg.topic.split('/')[2]\n    fields = {k: v for k, v in payload.items() if isinstance(v, (int, float))}\n    line = f\"{device_type},device_id={payload['device_id']} \" + \\\n           \",\".join(f\"{k}={v}\" for k, v in fields.items())\n    requests.post(f\"{INFLUX_URL}/api/v2/write?bucket=iot-data&precision=s\",\n                  data=line, headers={\"Authorization\": f\"Token {INFLUX_TOKEN}\"})",
+            "language": "python"
+          },
+          {
+            "title": "6 simulated devices with anomaly injection",
+            "body": "Each simulator is a containerized Python process emitting realistic telemetry: 2 production machines (5% random failure), temperature sensor (2% spike chance, alert at 80°C), pressure sensor (3% overpressure, alert at 5 bar), vibration sensor (4% anomaly on random axis), and an energy meter. MQTT topic scheme: iot/plant/{device_type}/{device_id}."
+          }
+        ],
+        "results": [
+          { "label": "End-to-end latency", "value": "< 2s" },
+          { "label": "Security tests", "value": "5/5 (100%)" },
+          { "label": "Concurrent devices", "value": "10+ tested" },
+          { "label": "Docker services", "value": "8" }
+        ],
+        "demoFeatures": [
+          "Single-command bring-up: docker-compose up -d spins the entire 8-service stack",
+          "Live Grafana dashboard at localhost:3001 with 8 auto-provisioned panels",
+          "Real-time anomaly injection visible as dashboard blips within seconds",
+          "Automated TLS security test suite with 100% pass rate",
+          "Horizontally scalable — adding a device = duplicating one compose service block"
+        ],
+        "lessons": [
+          "Node-RED was replaced with a ~90-line Python bridge — off-the-shelf glue tools add operational weight; a thin purpose-built service is clearer for a fixed pipeline.",
+          "Certificate SAN must cover both the Docker DNS alias and localhost for validation from inside and outside the network.",
+          "depends_on only waits for container start, not service readiness — always code MQTT clients to retry with backoff.",
+          "Bake least-privilege into the Docker image (non-root user, chmod 600 keys), not the runtime."
+        ],
         "github": "https://github.com/Ziarmex/mini-plant"
       },
       {
-        "title": "PLC Gateway (plc-gateway)",
-        "description": "Complete industrial gateway converting PLC Modbus protocols to OPC UA with Grafana visualization.",
-        "tags": ["Modbus", "OPC UA", "Node-RED", "Grafana"],
+        "slug": "plc-gateway",
+        "title": "PLC Gateway",
+        "tagline": "An industrial protocol gateway bridging legacy Modbus TCP PLCs to modern OPC UA, with real-time analytics and Grafana visualization.",
+        "category": "Industrial IoT",
+        "tags": ["Modbus TCP", "OPC UA", "Node-RED", "Docker Compose", "InfluxDB", "Grafana"],
+        "problem": "Modern factories run a mix of legacy and modern equipment. Older PLCs expose data only via Modbus TCP — a simple, register-based protocol — while modern SCADA/MES/IIoT systems expect OPC UA, a richer, standardized, semantically-tagged protocol. Bridging the two by hand is tedious: poll registers, decode fixed-point scalings, reassemble 32-bit counters split across two 16-bit registers, map bitfields to meaningful states.",
+        "approach": "Build a self-contained, Dockerized pipeline that reads live data from a (simulated) industrial PLC over Modbus, exposes it as OPC UA, then streams it through Node-RED for processing into InfluxDB and Grafana dashboards — all in one reproducible docker compose up.",
+        "architecture": {
+          "flow": ["PLC Simulator :5020", "Modbus poll (1s)", "Gateway → OPC UA :4840", "Node-RED :1880", "InfluxDB :8086", "Grafana :3000"],
+          "components": [
+            { "layer": "Simulator", "tech": "Python + pymodbus 3.5.2", "role": "Simulates PLC with 11 holding registers, sine-wave + noise" },
+            { "layer": "Gateway", "tech": "Node.js + node-opcua + modbus-serial", "role": "Modbus→OPC UA bridge, fixed-point decode, auto-reconnect" },
+            { "layer": "Processing", "tech": "Node-RED (opcua + influxdb plugins)", "role": "Derived analytics: power, rates, moving averages, anomaly flags" },
+            { "layer": "Storage", "tech": "InfluxDB 2.7 (Flux)", "role": "7 measurements, ns precision" },
+            { "layer": "Visualization", "tech": "Grafana (auto-provisioned)", "role": "9-panel dashboard, 5s refresh, gauges + time-series" },
+            { "layer": "Testing", "tech": "Bash test harness (221 lines)", "role": "6-phase automated validation" }
+          ],
+          "decisions": [
+            "Cyclic polling with auto-reconnect — polls Modbus every 1s, closes socket and retries after 3s on failure, robust against PLC restarts.",
+            "Lazy OPC UA variable getters — each node uses a get() closure reading in-memory plcData, so the address space always reflects the latest poll.",
+            "Fixed-point decoding at the gateway — temperature in 0.1°C, pressure in 0.01 Bar, vibration in 0.01 mm/s, all decoded at the bridge layer.",
+            "32-bit counter reassembly — production count split across two 16-bit registers, recombined with (high << 16) | low.",
+            "Separation of translation vs. analytics — gateway stays a pure protocol bridge (<100ms), all derived computation lives in Node-RED."
+          ]
+        },
+        "deepDive": [
+          {
+            "title": "Protocol impedance matching: Modbus → OPC UA",
+            "body": "Modbus is flat 16-bit registers with implicit, out-of-band scaling. OPC UA is a typed, hierarchical, browsable object model. The gateway invents the address-space structure (PLC_Data folder + typed variables) and encodes all fixed-point scaling knowledge in one place.",
+            "code": "// OPC UA address space exposed under Objects/PLC_Data/\nMotorSpeed    (Double)\nTemperature   (Double, ×0.1 °C)\nPressure      (Double, ×0.01 Bar)\nVibration     (Double, ×0.01 mm/s)\nCurrent       (Double, ×0.1 A)\nProductionCount (UInt32, (reg[6]<<16)|reg[7])\nMachineState  (String: Stop/Start/Run/Alarm)\nMotorOn       (Boolean, status & 0x01)\nAlarmActive   (Boolean, status & 0x08)",
+            "language": "text"
+          },
+          {
+            "title": "Bitfield-to-semantics mapping",
+            "body": "A single status register holds multiple boolean states packed into bits. The gateway unpacks them with masks into discrete OPC UA Boolean nodes so downstream consumers don't need to know bit positions.",
+            "code": "const MotorOn     = (status & 0x01) !== 0;\nconst TempHigh    = (status & 0x02) !== 0;\nconst PressureHigh = (status & 0x04) !== 0;\nconst AlarmActive = (status & 0x08) !== 0;\nconst VibrationHigh = (status & 0x10) !== 0;",
+            "language": "javascript"
+          },
+          {
+            "title": "Derived analytics in Node-RED",
+            "body": "Rather than dump raw values, Node-RED computes three-phase power (√3 × 400 × I × 0.85 / 1000), production rate per hour, moving averages, standard deviation, and deviation-from-mean anomaly flags — all before writing to InfluxDB."
+          }
+        ],
+        "results": [
+          { "label": "Conversion latency", "value": "50-100ms" },
+          { "label": "CPU per service", "value": "< 5%" },
+          { "label": "Total memory", "value": "~300 MB" },
+          { "label": "Grafana panels", "value": "9" }
+        ],
+        "demoFeatures": [
+          "No physical PLC needed — simulator generates sine-wave + noise with 2% random alarm trigger",
+          "Single command: docker compose build && docker compose up -d",
+          "9-panel Grafana dashboard with gauges, stat panels, and time-series (5s auto-refresh)",
+          "221-line automated test harness covering ports, containers, Modbus reads, conversion logs, InfluxDB writes, and Grafana dashboards",
+          "Temperature alarms, vibration spikes, and state transitions appear naturally within minutes"
+        ],
+        "lessons": [
+          "Protocol impedance mismatch between Modbus (flat 16-bit, implicit scaling) and OPC UA (typed, hierarchical, browsable) required inventing the address-space structure and encoding scaling in one place.",
+          "Reassembling 32-bit values across two 16-bit registers needs correct endianness — (high << 16) | low — a classic Modbus pitfall.",
+          "Connection resilience on industrial networks — close-on-error + delayed auto-reconnect beats crashing, with winston structured logging for observability.",
+          "Reproducibility without hardware — building a faithful PLC simulator (sine-wave + noise + stochastic alarms) made the entire stack demo-able on a laptop."
+        ],
         "github": "https://github.com/Ziarmex/plc-gateway"
+      }
+    ],
+    "other": [
+      {
+        "title": "ESP Cloud",
+        "description": "Full-stack IoT platform: C++ embedded web server on ESP32 with REST + WebSocket API, driven by a Next.js dashboard. Hot-registerable hardware components that survive reboots.",
+        "tags": ["ESP32", "C++", "REST API", "WebSockets", "Next.js"],
+        "category": "Full-stack",
+        "github": "https://github.com/Ziarmex/esp-cloud"
       },
       {
-        "title": "Industrial Monitoring Stack (monitoring-stack)",
-        "description": "Complete industrial monitoring system with real-time data collection, processing, storage and visualization.",
+        "title": "Industrial Monitoring Stack",
+        "description": "Self-contained monitoring pipeline: MQTT → Node-RED → InfluxDB → Grafana, fully containerized with zero-config auto-provisioning of all services.",
         "tags": ["MQTT", "Node-RED", "InfluxDB", "Grafana", "Docker"],
+        "category": "IoT",
         "github": "https://github.com/Ziarmex/monitoring-stack"
       },
       {
-        "title": "ESP Cloud (esp-cloud)",
-        "description": "IoT platform connecting embedded hardware to a web-based control interface.",
-        "tags": ["C++", "React", "IoT", "REST API"],
-        "github": "https://github.com/Ziarmex/esp-cloud"
+        "title": "Smart Parking IoT",
+        "description": "ESP32 + 6× HC-SR04 ultrasonic sensors serving live parking-bay occupancy as JSON, with an animated Next.js dashboard and transducer auto-detection at boot.",
+        "tags": ["ESP32", "HC-SR04", "Next.js", "framer-motion"],
+        "category": "IoT",
+        "github": "https://github.com/Ziarmex/parking-iot"
+      },
+      {
+        "title": "Skydio X2 Drone Simulator",
+        "description": "Physics-based 6-DOF drone flight simulator in MuJoCo with a modular PID controller (anti-windup, derivative-on-measurement, low-pass filter), real-time keyboard flight, and an obstacle course.",
+        "tags": ["MuJoCo", "Python", "PID Control", "Robotics"],
+        "category": "AI & Robotics",
+        "github": "https://github.com/Ziarmex/skydio_x2"
       }
     ]
   },
@@ -78,7 +278,7 @@
     "title": "Experience",
     "items": [
       {
-        "role": "Intern",
+        "role": "Intern — Information Systems",
         "company": "Sonelgaz, Distribution Directorate of Jijel",
         "period": "June – July 2025",
         "details": [
@@ -93,26 +293,38 @@
     "title": "Education",
     "items": [
       {
-        "degree": "Baccalaureate in Experimental Sciences",
-        "school": "Very Good Honor – 16.87/20",
-        "period": "2022"
+        "degree": "4th Year Engineering Degree — AI & Data Science",
+        "school": "ESTIN — Higher School of Computer Science",
+        "period": "2022 – Present"
       },
       {
-        "degree": "4th Year Engineering Degree",
-        "school": "ESTIN – AI/Data Science Specialization",
-        "period": "2022 – Present"
+        "degree": "Baccalaureate in Experimental Sciences",
+        "school": "Very Good Honor — 16.87/20",
+        "period": "2022"
       }
     ]
   },
   "contact": {
     "title": "Contact",
+    "heading": "Let's build something.",
+    "subheading": "Open to internship opportunities in IoT, edge AI, and industrial systems. Reach out — I respond fast.",
     "email": "ziad.r.bouraoui@gmail.com",
     "phone": "+213 659 019 559",
     "github": "https://github.com/Ziarmex",
-    "formName": "Name",
-    "formEmail": "Email",
-    "formMessage": "Message",
-    "formSend": "Send",
     "copyright": "All rights reserved"
+  },
+  "caseStudy": {
+    "back": "Projects",
+    "problem": "Problem",
+    "approach": "Approach",
+    "architecture": "Architecture",
+    "stack": "Tech Stack",
+    "decisions": "Key Decisions",
+    "deepDive": "Deep Dive",
+    "results": "Results",
+    "demoFeatures": "Demo Features",
+    "lessons": "Lessons Learned",
+    "viewSource": "View source code",
+    "nextProject": "Next project"
   }
 }
