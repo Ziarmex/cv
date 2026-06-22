@@ -27,7 +27,7 @@ export default function Hero() {
         >
           <Badge dot>{t("available")}</Badge>
 
-          <h1 className="mt-6 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.95] text-gray-900 dark:text-white text-balance">
+          <h1 className="mt-6 text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.95] text-gray-900 dark:text-white text-balance">
             {t("title")}
           </h1>
 

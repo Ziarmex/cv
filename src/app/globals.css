@@ -14,7 +14,7 @@
     @apply border-black/5 dark:border-white/10;
   }
   body {
-    @apply antialiased bg-[#fafafa] dark:bg-[#0a0a0b] text-gray-900 dark:text-white transition-colors duration-300;
+    @apply antialiased bg-[#fafafa] dark:bg-[#0a0a0b] text-gray-900 dark:text-white transition-colors duration-300 overflow-x-hidden max-w-[100vw];
   }
   ::selection {
     @apply bg-crimson/20 text-crimson-dark dark:text-white;
@@ -23,6 +23,11 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+  touch-action: manipulation;
 }
 
 @layer utilities {

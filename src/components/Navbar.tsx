@@ -37,7 +37,7 @@ export default function Navbar() {
     <>
       <SectionProgress />
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 pointer-events-none">
-        <div className="pointer-events-auto flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/70 dark:bg-black/60 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.12)]">
+        <div className="pointer-events-auto flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/70 dark:bg-black/60 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.12)] overflow-x-auto max-w-[calc(100vw-16px)]">
           {sections.map((id) => (
             <button
               key={id}

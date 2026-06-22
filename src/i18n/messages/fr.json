@@ -271,6 +271,13 @@
         "tags": ["MuJoCo", "Python", "PID Control", "Robotique"],
         "category": "AI & Robotique",
         "github": "https://github.com/Ziarmex/skydio_x2"
+      },
+      {
+        "title": "Serveur Téléphonique",
+        "description": "Un Redmi Note 8 Pro sous Droidian transformé en serveur headless 24/7. Héberge le portfolio via Caddy, l'assistant IA via Hermes sur WhatsApp, le tout exposé via Cloudflare Tunnel avec IP WiFi statique, secours USB, batterie limitée à 50% et auto-réparation.",
+        "tags": ["Droidian", "Caddy", "Cloudflare Tunnel", "Hermes IA", "SQLite"],
+        "category": "Infrastructure",
+        "github": "https://github.com/Ziarmex/phone-server"
       }
     ]
   },

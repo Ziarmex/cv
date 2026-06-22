@@ -18,6 +18,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export function generateStaticParams() {
+  return [{ locale: "en" }, { locale: "fr" }];
+}
+
 export const metadata: Metadata = {
   title: "Ziad Rafik Bouraoui | CV Portfolio",
   description: "Computer Science student specializing in IoT & AI",
